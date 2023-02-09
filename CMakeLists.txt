@@ -19,7 +19,7 @@ list(APPEND CMAKE_MODULE_PATH
   ${ParserBase_SOURCE_DIR}/CMake 
   ${ParserBase_SOURCE_DIR}/CMake/Modules
 )
-include(${ParserBase_SOURCE_DIR}/CMake/Configure.cmake)
+include(Configure)
 if (NOT Configure_SUCCEEDED)
    return()
 endif()
