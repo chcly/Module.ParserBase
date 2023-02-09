@@ -88,7 +88,7 @@ The `token(idx)' method uses the idx parameter as an offset from the cursor.
 So if the cursor is at 0 and idx is 3, then 4 tokens will be read, so that tokens
 [0-3] can be retrieved, but it will return the one at index 3.
 
-Then once a rule is either determined to be valid or invalid, the 'advanceCursor' method
+Then once a rule is determined to be valid, the 'advanceCursor' method
 moves the cursor forward. This way matching can assume that the next rule to test will start at index 0.  
 The parse should either match or be in error (100% or fail).
 
@@ -278,7 +278,7 @@ public:
 
     int value(const String& v, const int defaultValue = -1)
     {
-        if (const Api::const_iterator it = _data.find(v); it != _data.end())
+        if (const Api::iterator it = _data.find(v); it != _data.end())
             return it->second;
         return defaultValue;
     }
