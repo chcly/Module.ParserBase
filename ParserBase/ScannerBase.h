@@ -74,6 +74,8 @@ namespace Rt2
 
         void attach(IStream* stream, const PathUtil& file);
 
+        void attach(IStream* stream);
+
         const String& string(const size_t& i) const;
 
         void string(String& dest, const size_t& i) const;

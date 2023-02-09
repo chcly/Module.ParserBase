@@ -38,6 +38,13 @@ namespace Rt2
         _line   = 1;
     }
 
+    void ScannerBase::attach(IStream* stream)
+    {
+        _stream = stream;
+        _file   = {};
+        _line   = 1;
+    }
+
     size_t ScannerBase::save(const String& str)
     {
         return _stringTable.insert(str);
@@ -86,6 +93,8 @@ namespace Rt2
         while (ch != '\r' && ch != '\n')
         {
             ch = _stream->get();
+            if (ch <= 0)
+                break;
             if (ch == '\r' && _stream->peek() == '\n')
                 ch = _stream->get();
         }
@@ -99,6 +108,9 @@ namespace Rt2
         while (ch > 0)
         {
             ch = _stream->get();
+            if (ch <= 0)
+                break;
+
             if (ch == MultiLineCommentStop0 && _stream->peek() == MultiLineCommentStop1)
             {
                 _stream->get();

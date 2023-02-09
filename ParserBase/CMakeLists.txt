@@ -1,4 +1,4 @@
-set(TargetName ParseBase)
+set(TargetName ParserBase)
 include (GroupSet)
 
 set_group(Target_SRC
