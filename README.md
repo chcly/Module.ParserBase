@@ -74,8 +74,6 @@ value   = [0-9]+
 ### Translating it to code
 
 The TokenBase class is used to relay information from the input stream to the parser.
-The parser is setup to match rules from the order that the tokens are read.
-
 It defines the meaning of a token using two types. An integer type `int8_t` which is assigned as an enumerated lookup code.
 As well as an optional index `size_t` which points to a cached string or integer value.
 The cached values are stored in the scanner via the 'save' method, and they are retrieved via the 'string' and 'integer' methods.
@@ -86,14 +84,11 @@ The parser is setup to scan tokens automatically from a cursor position.
 
 The `token(idx)' method uses the idx parameter as an offset from the cursor.
 So if the cursor is at 0 and idx is 3, then 4 tokens will be read, so that tokens
-[0-3] can be retrieved, but it will return the one at index 3.
+[0-3] can be retrieved.
 
-Then once a rule is determined to be valid, the 'advanceCursor' method
-moves the cursor forward. This way matching can assume that the next rule to test will start at index 0.  
-The parse should either match or be in error (100% or fail).
+Then once a rule is determined to be valid, the 'advanceCursor' method moves the cursor forward. This way matching can assume that the next rule to test will start at index 0. To guarantee this assumption, the parse should either match or be in error (100% or fail). The scanner should use the `syntaxError` method to report invalid state, and the parser should use the `error` method.
 
 The following code implements this parser, which may also be found in the stand alone test for this repository.
-
 
 ```c++
 enum TokenId
