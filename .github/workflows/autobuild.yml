@@ -7,11 +7,11 @@ jobs:
      - uses: actions/checkout@v3
 
      - name: Configure
-       run: cmake -DTemplate_BUILD_TEST=ON -DTemplate_AUTO_RUN_TEST=ON .
+       run: cmake -DParserBase_BUILD_TEST=ON -DParserBase_AUTO_RUN_TEST=ON .
 
      - name: Build
        run: make
 
      - name: Test Output
-       run: ./Source/Template > out.ans && diff out.ans Test/inp.ans
+       run: ./Source/ParserBase > out.ans && diff out.ans Test/inp.ans
        
