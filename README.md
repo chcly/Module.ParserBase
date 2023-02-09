@@ -9,6 +9,42 @@ language specifics.
 
 This library depends on the [Utility](https://github.com/CharlesCarley/Internal.Utils) library for data structures and type declarations.
 
+- [ParserBase](#parserbase)
+  - [Testing](#testing)
+  - [Building](#building)
+    - [Building with CMake and Make](#building-with-cmake-and-make)
+    - [Optional defines](#optional-defines)
+  - [Sample (Config Parser)](#sample-config-parser)
+    - [Translating it to code](#translating-it-to-code)
+
+
+## Testing
+
+The testing directory is setup to work with [googletest](https://github.com/google/googletest).
+It contains the initial setup for testing this library as a standalone module using GitHub actions.
+
+## Building
+
+It builds with cmake, and it has been tested on Windows and Unix platforms using
+the Visual Studio an Unix MakeFile cmake generators.
+
+### Building with CMake and Make
+
+```sh
+mkdir build
+cd build
+cmake .. -DParserBase_BUILD_TEST=ON -DParserBase_AUTO_RUN_TEST=ON
+make
+```
+
+### Optional defines
+
+| Option                        | Description                                          | Default |
+| :---------------------------- | :--------------------------------------------------- | :-----: |
+| ParserBase_BUILD_TEST         | Build the unit test program.                         |   ON    |
+| ParserBase_AUTO_RUN_TEST      | Automatically run the test program.                  |   OFF   |
+| ParserBase_USE_STATIC_RUNTIME | Build with the MultiThreaded(Debug) runtime library. |   ON    |
+
 ## Sample (Config Parser)
 
 This sample walks through building a minimal key/value parse API.
@@ -23,7 +59,7 @@ b = 2;
 
 The keys will be defined as the set of one or more lowercase characters a through z.
 And, the values will be defined as the set of one or more digits 0 through 9.
-Internally, the value will be stored as an unsigned 32 bit integer. [0-4,294,967,295]
+Internally, the value will be stored as an integer.
 
 Using this description, the grammar is defined by the following fragment.
 
@@ -35,28 +71,29 @@ value   = [0-9]+
 <key_value>  ::= id '=' value ';'
 ```
 
-## Translating it to code
+### Translating it to code
 
 The TokenBase class is used to relay information from the input stream to the parser.
 The parser is setup to match rules from the order that the tokens are read.
 
 It defines the meaning of a token using two types. An integer type `int8_t` which is assigned as an enumerated lookup code.
 As well as an optional index `size_t` which points to a cached string or integer value.
-The cached values are stored in the scanner via the 'save' method. They are retrieved via the 'string' and 'integer' methods.
+The cached values are stored in the scanner via the 'save' method, and they are retrieved via the 'string' and 'integer' methods.
 
-Each time the scanner matches a token, it should save any data read from the stream that it needs later, then associate a code with it, and immediately return from `scan`.
+Each time the scanner matches a token, it should save any relevant data and codes to the supplied token, then immediately return from `scan`.
 
 The parser is setup to scan tokens automatically from a cursor position.
 
 The `token(idx)' method uses the idx parameter as an offset from the cursor.
-So if the cursor is at 0 and idx is 3, then 4 tokens will be read and stored so that tokens
-[0-3] can be retrieved, but it will return the last one at index 3.
+So if the cursor is at 0 and idx is 3, then 4 tokens will be read, so that tokens
+[0-3] can be retrieved, but it will return the one at index 3.
 
 Then once a rule is either determined to be valid or invalid, the 'advanceCursor' method
 moves the cursor forward. This way matching can assume that the next rule to test will start at index 0.  
 The parse should either match or be in error (100% or fail).
 
 The following code implements this parser, which may also be found in the stand alone test for this repository.
+
 
 ```c++
 enum TokenId
@@ -247,30 +284,3 @@ public:
     }
 };
 ```
-
-## Testing
-
-The testing directory is setup to work with [googletest](https://github.com/google/googletest).
-It contains the initial setup for testing this library as a standalone module using GitHub actions.
-
-## Building
-
-It builds with cmake, and it has been tested on Windows and Unix platforms using
-the Visual Studio an Unix MakeFile cmake generators.
-
-### Building with CMake and Make
-
-```sh
-mkdir build
-cd build
-cmake .. -DParserBase_BUILD_TEST=ON -DParserBase_AUTO_RUN_TEST=ON
-make
-```
-
-### Optional defines
-
-| Option                        | Description                                          | Default |
-| :---------------------------- | :--------------------------------------------------- | :-----: |
-| ParserBase_BUILD_TEST         | Build the unit test program.                         |   ON    |
-| ParserBase_AUTO_RUN_TEST      | Automatically run the test program.                  |   OFF   |
-| ParserBase_USE_STATIC_RUNTIME | Build with the MultiThreaded(Debug) runtime library. |   ON    |
