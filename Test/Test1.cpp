@@ -30,15 +30,13 @@ using namespace Rt2;
 enum TokenId
 {
     TOK_ERROR = -2,
-    TOK_EOF,
-    TOK_NULL,
-    TOK_KEY,
-    TOK_VALUE,
-    TOK_EQ        = '=',
-    TOK_SEMICOLON = ';'
+    TOK_EOF,              // no more characters in the stream
+    TOK_NULL,             // undefined value
+    TOK_KEY,              // a character sequence [a-z]+
+    TOK_VALUE,            // a character sequence [0-9]+
+    TOK_EQ        = '=',  // character =
+    TOK_SEMICOLON = ';'   // character ;
 };
-
-
 
 class ConfigScanner final : public ScannerBase
 {
@@ -46,18 +44,20 @@ public:
     void scanInt(TokenBase& tok)
     {
         String dest;
+        int    ch = _stream->get();
 
-        int ch = _stream->get();
         while (isDecimal(ch))
         {
             dest.push_back((char)ch);
             ch = _stream->get();
+
             if (ch <= 0)
                 syntaxError("unexpected end of file");
         }
         _stream->putback((char)ch);
 
-        tok.setIndex(save(Char::toInt32(dest)));
+        // save it to the cache and set it's index
+        tok.setIndex(save(Char::toUint32(dest)));
         tok.setType(TOK_VALUE);
     }
 
@@ -70,10 +70,14 @@ public:
         {
             dest.push_back((char)ch);
             ch = _stream->get();
+
             if (ch <= 0)
                 syntaxError("unexpected end of file");
         }
         _stream->putback((char)ch);
+
+
+        // save it to the cache and set it's index
         tok.setIndex(save(dest));
         tok.setType(TOK_KEY);
     }
@@ -82,10 +86,10 @@ public:
     void scan(TokenBase& tok) override
     {
         if (_stream == nullptr)
-            syntaxError("No supplied stream");
+            syntaxError("no supplied stream");
 
-        tok.setType(TOK_NULL);
         tok.clear();
+        tok.setType(TOK_NULL);
 
         int ch;
         while ((ch = _stream->get()) > 0)
@@ -121,20 +125,23 @@ public:
                 scanWhiteSpace();
                 break;
             default:
-                syntaxError("unknown character parsed #x", Char::toHexString((uint8_t)ch), "'");
+                syntaxError("unknown character parsed ", ch, "'");
             }
         }
-
         tok.setType(TOK_EOF);
     }
 };
 
-using Api = std::map<String, int>;
-
 class ConfigParser final : public ParserBase
 {
 private:
+    using Api = std::map<String, int>;
     Api _data;
+
+    void writeImpl(OStream& os, int format) override
+    {
+        // TODO: write the contents of _data to the stream
+    }
 
 public:
     ConfigParser()
@@ -142,15 +149,9 @@ public:
         _scanner = new ConfigScanner();
     }
 
-
     ~ConfigParser() override
     {
         delete _scanner;
-    }
-
-
-    void writeImpl(OStream& is, int format) override
-    {
     }
 
     void keyValueRule()
@@ -164,12 +165,16 @@ public:
         if (tokenType(3) != TOK_SEMICOLON)
             error("invalid token type");
 
-        String key   = _scanner->string(token(0).index());
-        int    value = _scanner->integer(token(2).index());
+        // access the values stored at indices 0 and 2
+        String key = _scanner->string(token(0).index());
+        int value = _scanner->integer(token(2).index());
 
         if (_data.find(key) != _data.end())
             error("duplicate key");
+
         _data.insert(std::make_pair(key, value));
+
+        // skip the 4 processed tokens
         advanceCursor(4);
     }
 
@@ -180,6 +185,8 @@ public:
         // to the scanner
         _cursor = 0;
         _scanner->attach(&is);
+
+
         while (_cursor <= (int32_t)_tokens.size())
         {
             if (token(0).type() == TOK_EOF)
@@ -194,7 +201,6 @@ public:
                 advanceCursor();
         }
     }
-
 
     bool hasKey(const String& v)
     {
