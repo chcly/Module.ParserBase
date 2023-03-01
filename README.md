@@ -9,15 +9,6 @@ language specifics.
 
 This library depends on the [Utility](https://github.com/CharlesCarley/Internal.Utils) library for data structures and type declarations.
 
-- [ParserBase](#parserbase)
-  - [Testing](#testing)
-  - [Building](#building)
-    - [Building with CMake and Make](#building-with-cmake-and-make)
-    - [Optional defines](#optional-defines)
-  - [Sample (Config Parser)](#sample-config-parser)
-    - [Translating it to code](#translating-it-to-code)
-
-
 ## Testing
 
 The testing directory is setup to work with [googletest](https://github.com/google/googletest).
