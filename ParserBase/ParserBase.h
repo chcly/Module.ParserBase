@@ -52,6 +52,12 @@ namespace Rt2
 
         int8_t tokenType(int32_t offs);
 
+        size_t tokenIndex(int32_t offs);
+
+        String string(int32_t offs);
+
+        I32 integer(int32_t offs);
+
         void advanceCursor(int32_t n = 1);
 
         void readToken(int32_t n = 1);

@@ -59,6 +59,25 @@ namespace Rt2
         return token(offs).type();
     }
 
+    size_t ParserBase::tokenIndex(const int32_t offs)
+    {
+        return token(offs).index();
+    }
+
+    String ParserBase::string(int32_t offs)
+    {
+        if (_scanner)
+            return _scanner->string(token(offs).index());
+        return {};
+    }
+
+    I32 ParserBase::integer(int32_t offs)
+    {
+        if (_scanner)
+            return _scanner->integer(token(offs).index());
+        return 0;
+    }
+
     void ParserBase::advanceCursor(const int32_t n)
     {
         _cursor += n;
@@ -105,7 +124,7 @@ namespace Rt2
         if (_file.empty())
         {
             if (file.empty())
-                _file = Su::join("sid", '.', HexId());
+                _file = "memory file";
             else
                 _file = file;
         }
