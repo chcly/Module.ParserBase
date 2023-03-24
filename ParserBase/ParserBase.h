@@ -77,7 +77,7 @@ namespace Rt2
 
         void read(const String& file);
 
-        void read(IStream& is, const String& file = "");
+        void read(IStream& input, const String& file = "");
 
         void write(const String& file, int format = 0);
 

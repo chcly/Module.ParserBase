@@ -118,9 +118,8 @@ namespace Rt2
         parseImpl(is);
     }
 
-    void ParserBase::read(IStream& is, const String& file)
+    void ParserBase::read(IStream& input, const String& file)
     {
-        // save some relatively unique name for the file
         if (_file.empty())
         {
             if (file.empty())
@@ -128,7 +127,7 @@ namespace Rt2
             else
                 _file = file;
         }
-        parseImpl(is);
+        parseImpl(input);
     }
 
     void ParserBase::write(const String& file, const int format)
