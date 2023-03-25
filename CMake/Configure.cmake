@@ -22,7 +22,6 @@ include(GitUpdate)
 if (NOT GitUpdate_SUCCESS)
     return()
 endif()
-
 include(StaticRuntime)
 include(GTestUtils)
 include(ExternalTarget)
@@ -52,44 +51,6 @@ DefineExternalTargetEx(
     ${ParserBase_AUTO_RUN_TEST}
 )
 
-
-
-
-set(ExtraFlags )
-if (MSVC)
-    # globally disable scoped enum warnings
-    set(ExtraFlags "${ExtraFlags} /wd26812")
-    
-    
-    set(ExtraFlags "${ExtraFlags} /W3")
-
-
-    if (ParserBase_JUST_MY_CODE)
-        # Enable just my code...
-        set(ExtraFlags "${ExtraFlags} /JMC")
-    endif ()
-
-    set(ExtraFlags "${ExtraFlags} /fp:precise")
-    set(ExtraFlags "${ExtraFlags} /fp:except")
-
-    if (ParserBase_OPEN_MP)
-        add_definitions(-DRT_OPEN_MP=1)
-        set(ExtraFlags "${ExtraFlags} /openmp")
-    endif()
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ExtraFlags}")
-
-else ()
-    set(ExtraFlags "${ExtraFlags} -Os")
-    set(ExtraFlags "${ExtraFlags} -O3")
-    set(ExtraFlags "${ExtraFlags} -fPIC")
-
-    if (ParserBase_OPEN_MP)
-        add_definitions(-DRT_OPEN_MP=1)
-        set(ExtraFlags "${ExtraFlags} -fopenmp")
-    endif()
-    
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ExtraFlags}")
-endif ()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Utils_EXTRA_FLAGS}")
 
 set(Configure_SUCCEEDED TRUE)
