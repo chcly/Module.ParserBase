@@ -1,13 +1,10 @@
 # ParserBase
 
-Parser base is a base class library for deriving custom hand written domain specific
-languages, or simple scripting languages.
+Is a base class library for deriving custom parsers.
 
 It contains the Parser, Scanner, and Token classes that are common with most
-standard language parsers. Its up to the derived library to define the grammar and
+language parsers. Its up to the derived library to define the grammar and
 language specifics.
-
-This library depends on the [Utility](https://github.com/CharlesCarley/Internal.Utils) library for data structures and type declarations.
 
 ## Testing
 
