@@ -6,8 +6,6 @@ It contains classes that are common with most language parsers.
 
 It is up to the derived library to define the grammar and language specifics.
 
-+ [Example](EXAMPLE.md) - Shows usage for a key value parser.
-
 ## Testing
 
 The testing directory is setup to work with [googletest](https://github.com/google/googletest).
